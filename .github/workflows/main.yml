@@ -28,16 +28,14 @@ jobs:
     - name: export roam
       shell: bash
       env:
-        ROAM_USERNAME: ${{ secrets.ROAM_USERNAME }}
-        ROAM_PASSWORD: ${{ secrets.ROAM_PASSWORD }}
-        ROAM_DATABASE: ${{ secrets.ROAM_DATABASE }}
+        DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
       run: |
         mkdir zip
         cd export
         npm install
         node index.js
-        npm install --save-dev nunzip
-        ./node_modules/nunzip/index.js *.zip -d ../zip/
+        unzip data.zip -d ../zip
+        find ../zip -type file -exec mv {} ../zip/ \;
         ls ../zip/*
 
     - name: transform to hugo markdown

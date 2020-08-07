@@ -1,76 +1,23 @@
-const puppeteer = require('puppeteer');
+const Dropbox = require('dropbox').Dropbox;
+const fetch = require('isomorphic-fetch');
+const fs = require('fs');
 
-USERNAME = process.env.ROAM_USERNAME;
-PASSWORD = process.env.ROAM_PASSWORD;
+const ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+const DROPBOX_PATH = process.env.DROPBOX_PATH || '/obsidian/obsidian-notes'
 
-URL = 'https://roamresearch.com/#/app/' + process.env.ROAM_DATABASE; 
-
-const run = async () => {
-  const browser = await puppeteer.launch({
-    args: [
-      // Required for Docker version of Puppeteer
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      // This will write shared memory files into /tmp instead of /dev/shm,
-      // because Docker’s default for /dev/shm is 64MB
-      '--disable-dev-shm-usage'
-    ],
-    headless: true,
-  });
-  const page = await browser.newPage();
-
-  const client = await page.target().createCDPSession();
-  await client.send('Page.setDownloadBehavior', {
-    behavior: 'allow', downloadPath: './downloads/'
-  });
-  await page.goto(URL);
-
-  
-  await page.waitFor('input[name=email]');
-  await page.focus('input[name=email')
-  await page.keyboard.type(USERNAME)
-
-  await page.waitFor('input[name=password]');
-  await page.focus('input[name=password')
-  await page.keyboard.type(PASSWORD)
-
-  await page.evaluate(() => {
-    document.getElementsByTagName("button")[0].click();
-  });
-
-
-  await page.waitForFunction(() => document.getElementsByClassName("bp3-icon-more").length);
-  await page.waitFor(4000);
-  await page.keyboard.press('Escape');
-  await page.evaluate(() => {
-    document.getElementsByClassName("bp3-icon-more")[0].click();
-  });
-
-  let exportAll = await page.$x("//div[contains(text(), 'Export All')]");
-  exportAll[0].click()
-
-  await page.waitFor(1000);
-  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './'});
-  exportAll = await page.$x("//button[contains(text(), 'Export All')]");
-  exportAll[0].click()
-  await page.waitFor(4000);
-
-  await browser.close();
-}
-
-const MAX_RETRIES=3;
-
-(async () => {
-  
-  for(let i=0; i< MAX_RETRIES; i++) {
-    try {
-      await run()
-      return;
-    } catch (e) {
-      console.error(`failed with ${e} attemp ${i} of ${MAX_RETRIES}`)
+new Dropbox({
+  fetch,
+  accessToken: ACCESS_TOKEN,
+})
+  .filesDownloadZip({path: DROPBOX_PATH})
+  .then((result, error) => {
+    if(error) {
+      console.error(error);
+      process.exit(1);
     }
-  }
 
-  process.exit(1);
-  
-})();
+    fs.writeFile('data.zip', result.fileBinary, 'binary', function (err) {
+      if (err) { throw err; }
+      console.log('File saved.');
+    });
+  });
