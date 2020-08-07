@@ -35,7 +35,7 @@ jobs:
         npm install
         node index.js
         unzip data.zip -d ../zip
-        find ../zip -type file -exec mv {} ../zip/ \;
+        find ../zip -type f -exec mv {} ../zip/ \;
         ls ../zip/*
 
     - name: transform to hugo markdown
