@@ -20,4 +20,8 @@ new Dropbox({
       if (err) { throw err; }
       console.log('File saved.');
     });
+  })
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
   });
