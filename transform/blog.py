@@ -10,6 +10,10 @@ REPLACE_TWO_SPACES= re.compile("""^\s{4}""")
 TODO_RE = re.compile("""{{\[\[TODO\]\]}}""")
 DONE_RE = re.compile("""{{\[\[DONE\]\]}}""")
 
+ANKI_ID = re.compile("""{{\w*id:(.*?)}}""")
+ANKI_FLASHCARD_TAG = re.compile("\[\[Flashcard\]\]""", re.IGNORECASE)
+ANKI_CLOZE = re.compile("""{{\w*\d+::\s*(.*?)\s*}}""")
+
 def read(args):
     markdown = args.infile.read()
     args.infile.close()
@@ -54,6 +58,14 @@ def removeOneLevel(markdown):
 
     return "\n".join(lines)
 
+def transformAnki(markdown):
+    lines = markdown.split("\n")
+    lines = [ANKI_FLASHCARD_TAG.sub("", line) for line in lines]
+    lines = [ANKI_ID.sub("", line) for line in lines]
+    lines = [ANKI_CLOZE.sub("\\1", line) for line in lines]
+
+    return "\n".join(lines)
+
 def transformTodos(markdown):
     lines = markdown.split("\n")
     
@@ -86,6 +98,7 @@ def main():
     markdown_no_metadata = "-" + METADATA_RE.sub("", markdown)
     markdown_no_metadata = removeOneLevel(markdown_no_metadata)
     markdown_no_metadata = transformTodos(markdown_no_metadata)
+    markdown_no_metadata = transformAnki(markdown_no_metadata)
 
     
     markdown = f"""
