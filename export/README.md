@@ -14,6 +14,6 @@ npm install
 set the correct env variables:
 
 1. You need to create a new app in dropbox https://www.dropbox.com/developers/apps
-2. Generate your own Access token
+2. Generate your own Access token (with **no expiration**)
 3. Make sure you have the env variable `DROPBOX_ACCESS_TOKEN`
 4. run `node index.js`
