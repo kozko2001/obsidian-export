@@ -35,7 +35,8 @@ jobs:
         npm install
         node index.js
         unzip data.zip -d ../zip
-        find ../zip -type f -exec mv {} ../zip/ \;
+        mv -f ../zip/obsidian-notes/* ../zip/
+        rm -rf ../zip/obsidian-notes
         ls ../zip/*
 
     - name: transform to hugo markdown
@@ -44,7 +45,8 @@ jobs:
         mkdir posts
         pip3 install -r transform/requirements.txt
         cd zip
-        find . -name \*.md -exec python3 ../transform/blog.py -i {} -o ../posts/ \;
+        find . -name \*.md -exec python3 ../transform/blog.py -i {} -o ../posts/obsidian/ \;
+        mv ../zip/images ../posts/obsidian/
 
     - name: transform roam to anki cards
       shell: bash
