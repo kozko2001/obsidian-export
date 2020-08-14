@@ -64,6 +64,6 @@ jobs:
         git config --global user.name "kozko2001"
         git clone "https://$API_TOKEN_GITHUB@github.com/kozko2001/blog-hugo.git" "blog"
         ls blog/
-        cp posts/* blog/content/posts/
+        cp -r posts/* blog/content/posts/
         cp decks.json blog/static/anki/decks.json
         ./commit.sh blog/
