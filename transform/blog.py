@@ -14,6 +14,9 @@ ANKI_ID = re.compile("""{{\w*id:(.*?)}}""")
 ANKI_FLASHCARD_TAG = re.compile("\[\[Flashcard\]\]""", re.IGNORECASE)
 ANKI_CLOZE = re.compile("""{{\w*\d+::\s*(.*?)\s*}}""")
 
+IMAGES = re.compile("""\!\[\[(.*?\.(png|jpg))\]\]""", re.DOTALL)
+
+
 def read(args):
     markdown = args.infile.read()
     args.infile.close()
@@ -66,6 +69,11 @@ def transformAnki(markdown):
 
     return "\n".join(lines)
 
+def transformImages(markdown):
+    lines = markdown.split("\n")
+    lines = [IMAGES.sub("![](../\\1)", line) for line in lines]
+    return "\n".join(lines)
+
 def transformTodos(markdown):
     lines = markdown.split("\n")
     
@@ -95,10 +103,10 @@ def main():
     blog, date = getBlogAttributes(metadata)
 
 
-    markdown_no_metadata = "-" + METADATA_RE.sub("", markdown)
-    markdown_no_metadata = removeOneLevel(markdown_no_metadata)
-    markdown_no_metadata = transformTodos(markdown_no_metadata)
-    markdown_no_metadata = transformAnki(markdown_no_metadata)
+    markdown = "-" + METADATA_RE.sub("", markdown)
+    markdown = removeOneLevel(markdown)
+    markdown = transformAnki(markdown)
+    markdown = transformImages(markdown)
 
     
     markdown = f"""
@@ -106,7 +114,7 @@ def main():
 title: {blog}
 date: {date}
 ---
-""" + markdown_no_metadata
+""" + markdown
 
 
     with open(getOutputFile(args), "w") as f:
