@@ -42,11 +42,12 @@ jobs:
     - name: transform to hugo markdown
       shell: bash
       run: |
+        mkdir -p posts/obsidian/images
         pip3 install -r transform/requirements.txt
         cd zip
         find . -name \*.md -exec python3 ../transform/blog.py -i {} -o ../posts/obsidian/ \;
         mkdir ../posts/obsidian/images
-        mv ../zip/images/* ../posts/obsidian/images
+        mv images/* ../posts/obsidian/images
 
     - name: transform roam to anki cards
       shell: bash
