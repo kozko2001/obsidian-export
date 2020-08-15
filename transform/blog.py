@@ -71,7 +71,7 @@ def transformAnki(markdown):
 
 def transformImages(markdown):
     lines = markdown.split("\n")
-    lines = [IMAGES.sub("![](../\\1)", line) for line in lines]
+    lines = [IMAGES.sub("![](<../\\1>)", line) for line in lines]
     return "\n".join(lines)
 
 def transformTodos(markdown):
