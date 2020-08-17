@@ -43,6 +43,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p posts/obsidian/images
+        pip3 install setuptools
         pip3 install -r transform/requirements.txt
         cd zip
         find . -name \*.md -exec python3 ../transform/blog.py -i {} -o ../posts/obsidian/ \;

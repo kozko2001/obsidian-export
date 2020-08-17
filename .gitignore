@@ -5,3 +5,4 @@ zip/
 posts/
 *.swp
 .envrc
+.venv/
