@@ -2,6 +2,8 @@ import argparse
 import re
 import os
 import dateutil.parser as parser
+from slugify import slugify
+
 
 METADATA_RE = re.compile("""-\W+(reference|metadata)(.*?)\n(?P<metadata>.*?)\n-""", re.DOTALL)
 ATTRIBUTES_RE = re.compile("""\W+([A-z]+?)::\s+(.*)\s*""")
@@ -15,6 +17,8 @@ ANKI_FLASHCARD_TAG = re.compile("\[\[Flashcard\]\]""", re.IGNORECASE)
 ANKI_CLOZE = re.compile("""{{\w*\d+::\s*(.*?)\s*}}""")
 
 IMAGES = re.compile("""\!\[\[(.*?\.(png|jpg))\]\]""", re.DOTALL)
+EMBEDDED_LINKS = re.compile("""\!\[\[(.*?)\]\]""", re.DOTALL)
+LINKS = re.compile("""\[\[(.*?)\]\]""", re.DOTALL)
 
 
 def read(args):
@@ -79,6 +83,37 @@ def transformTodos(markdown):
     
     lines = [TODO_RE.sub("[ ]", line) for line in lines]
     lines = [DONE_RE.sub("[x]", line) for line in lines]
+    return "\n".join(lines)
+
+def transformLinks(markdown):
+    def replace(match):
+        if match:
+            page_name = match.group(1)
+            link = slugify(page_name)
+            return f"[{page_name}](../{link})"
+        return None
+
+    lines = markdown.split("\n")
+    lines = [LINKS.sub(replace, line) for line in lines]
+
+    return "\n".join(lines)
+
+def transformEmbeddedLinks(markdown, outfolder):
+    def replace(match):
+        if match:
+            page_name = match.group(1)
+            filename = os.path.join(outfolder, page_name + ".md")
+
+            if os.path.exists(filename):
+                with open(filename, "r") as f:
+                    lines = [f"> {line}" for line in f.readlines()]
+                    return "\n".join(lines)
+            else:
+                f"[{page_name}](#)"
+        return None
+
+    lines = markdown.split("\n")
+    lines = [EMBEDDED_LINKS.sub(replace, line) for line in lines]
 
     return "\n".join(lines)
 
@@ -107,7 +142,8 @@ def main():
     markdown = removeOneLevel(markdown)
     markdown = transformAnki(markdown)
     markdown = transformImages(markdown)
-
+    markdown = transformEmbeddedLinks(markdown, args.outfolder)
+    markdown = transformLinks(markdown)
     
     markdown = f"""
 ---
