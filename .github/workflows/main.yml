@@ -62,6 +62,7 @@ jobs:
       run: |
         git clone https://github.com/kozko2001/roam-to-anki.git
         cd roam-to-anki/transform;
+        npm install
         node index.js -i ../../zip -o ../../blog/static/anki/decks.json
 
 
