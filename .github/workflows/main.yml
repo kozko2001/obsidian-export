@@ -61,7 +61,9 @@ jobs:
       shell: bash
       run: |
         git clone https://github.com/kozko2001/roam-to-anki.git
-        python3 roam-to-anki/transform/anki.py -i ./zip -o blog/static/anki/decks.json
+        cd roam-to-anki/transform;
+        node index.js -i ../../zip -o ../../blog/static/anki/decks.json
+
 
     - name: push to my blog
       shell: bash
