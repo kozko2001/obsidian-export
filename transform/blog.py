@@ -139,7 +139,6 @@ def main():
 
 
     markdown = "-" + METADATA_RE.sub("", markdown)
-    markdown = removeOneLevel(markdown)
     markdown = transformAnki(markdown)
     markdown = transformImages(markdown)
     markdown = transformEmbeddedLinks(markdown, args.outfolder)
