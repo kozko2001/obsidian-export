@@ -29,11 +29,14 @@ jobs:
       shell: bash
       env:
         DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
+        TRELLO_API: ${{ secrets.TRELLO_API }}
+        TRELLO_SECRET: ${{ secrets.TRELLO_SECRET }}
       run: |
         mkdir zip
         cd export
         npm install
         node index.js
+        node trello.js
         unzip data.zip -d ../zip
         mv -f ../zip/obsidian-notes/* ../zip/
         rm -rf ../zip/obsidian-notes
