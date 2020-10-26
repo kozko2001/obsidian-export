@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "dropbox": "^5.2.1",
-    "puppeteer": "^5.0.0"
+    "puppeteer": "^5.0.0",
+    "trello-to-markdown-table": "0.0.1"
   },
   "devDependencies": {
     "isomorphic-fetch": "^2.2.1"
