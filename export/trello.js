@@ -16,6 +16,6 @@ const dbx = new Dropbox({
 const board = "C5eJ2nzP";
 
 trello(TRELLO_API, TRELLO_SECRET, board)
-    .then(out => dbx.filesUpload({path: DROPBOX_PATH + '/Personal Kanban.md', contents: out}))
+    .then(out => dbx.filesUpload({ path: DROPBOX_PATH + '/Personal Kanban.md', contents: out, mode: 'overwrite'}))
     .then(() => console.log("done!"))
     .catch((e) => console.log("error found... ", e))
