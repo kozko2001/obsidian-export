@@ -71,6 +71,9 @@ jobs:
         npm install
         node index.js -i ../../zip -o ../decks.json
         cd ../importer
+        echo "DEBUG LS!"
+        ls .
+        pip3 install setuptools
         pip3 install -r requirements.txt
         python3 import.py --infile ../decks.json
 
