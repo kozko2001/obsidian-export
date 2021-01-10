@@ -61,7 +61,7 @@ jobs:
         mv images/* ../blog/content/posts/obsidian/images
 
     - name: transform roam to anki cards
-    - uses: actions/setup-python@v2
+      uses: actions/setup-python@v2
       with:
         python-version: '3.9'
         architecture: 'x64'
