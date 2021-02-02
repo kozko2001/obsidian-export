@@ -3,6 +3,8 @@ import re
 import os
 import dateutil.parser as parser
 from slugify import slugify
+from shutil import copyfile
+from os import path
 
 
 METADATA_RE = re.compile("""-\W+(reference|metadata)(.*?)\n(?P<metadata>.*?)\n-""", re.DOTALL)
@@ -35,18 +37,19 @@ def getMetadata(markdown):
 def getAttributes(metadata):
     attr = {}
 
-    for line in metadata.split("\n"):
-        attributes = re.match(ATTRIBUTES_RE, line)
-        if attributes:
-            name, value = attributes.groups()
-            attr[name] = value
+    if metadata:
+        for line in metadata.split("\n"):
+            attributes = re.match(ATTRIBUTES_RE, line)
+            if attributes:
+                name, value = attributes.groups()
+                attr[name] = value
 
     return attr
 
 def getBlogAttributes(metadata):
     attributes = getAttributes(metadata)
 
-    blog = attributes["blog"]
+    blog = attributes["blog"] if "blog" in attributes else None
     date = attributes["date"] if "date" in attributes else None
 
     if date: 
@@ -77,6 +80,11 @@ def transformImages(markdown):
     lines = markdown.split("\n")
     lines = [IMAGES.sub("![](<../\\1>)", line) for line in lines]
     return "\n".join(lines)
+
+def findImages(markdown):
+    images = [IMAGES.search(line) for line in markdown.split("\n")]
+    images = [re.groups()[0].replace("./", "") for re in images if re]
+    return images
 
 def transformTodos(markdown):
     lines = markdown.split("\n")
@@ -128,6 +136,7 @@ def main():
     parser.add_argument("-i", dest="infile", required=True, 
                         type=argparse.FileType('r', encoding='UTF-8'))
     parser.add_argument("-o", dest="outfolder", required=True, type=str)
+    parser.add_argument("-p", dest="imagePath", required=True, type=str)
 
     args = parser.parse_args()
 
@@ -137,6 +146,13 @@ def main():
     metadata = getMetadata(markdown)
     blog, date = getBlogAttributes(metadata)
 
+    if not blog and not date:
+        return
+
+    if not blog:
+        print(f"processing {args.infile} {blog}")
+
+    images_to_copy = findImages(markdown)
 
     markdown = "-" + METADATA_RE.sub("", markdown)
     markdown = transformAnki(markdown)
@@ -154,6 +170,14 @@ date: {date}
 
     with open(getOutputFile(args), "w") as f:
         f.write(markdown)
+
+    ## copy images used in markdowns into the images folder
+    for image in images_to_copy:
+        folder = path.dirname(args.infile.name)
+        imagename = path.basename(image)
+
+        image_path = path.join(folder, image)
+        copyfile(image_path, path.join(args.imagePath, imagename))
 
 if __name__ == "__main__":
     main()
