@@ -1,7 +1,5 @@
 from os.path import basename, split
 
-loop = asyncio.get_event_loop()
-
 from os import environ
 from sys import argv
 
