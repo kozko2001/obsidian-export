@@ -1,5 +1,3 @@
-import aioeasywebdav
-import asyncio
 from os.path import basename, split
 
 loop = asyncio.get_event_loop()
