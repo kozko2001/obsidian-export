@@ -1,19 +1,23 @@
 
 # Roam export 
 
-This is a dirty cli to export my obsidian files stored in a dropbox folder
+This is a dirty cli to export my obsidian files stored in a nextcloud folder
 
 ## install dependencies
 
 ```
-npm install
+pip install -r requirements.txt
 ```
 
 ## Run it
 
 set the correct env variables:
 
-1. You need to create a new app in dropbox https://www.dropbox.com/developers/apps
-2. Generate your own Access token (with **no expiration**)
-3. Make sure you have the env variable `DROPBOX_ACCESS_TOKEN`
-4. run `node index.js`
+- `NEXT_CLOUD_HOST` (i.e: https://cloud.domain/com)
+- `NEXT_CLOUD_USER`
+- `NEXT_CLOUD_PASSWORD`
+- `NEXT_CLOUD_FOLDER`
+
+run 
+
+`python main.py`

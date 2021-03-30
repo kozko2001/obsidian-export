@@ -32,15 +32,14 @@ jobs:
     - name: export roam
       shell: bash
       env:
-        DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
-        TRELLO_API: ${{ secrets.TRELLO_API }}
-        TRELLO_SECRET: ${{ secrets.TRELLO_SECRET }}
+        NEXT_CLOUD_HOST: ${{ secrets.NEXT_CLOUD_HOST }}
+        NEXT_CLOUD_PASSWORD: ${{ secrets.NEXT_CLOUD_PASSWORD }}
+        NEXT_CLOUD_USER: ${{ secrets.NEXT_CLOUD_USER }}
       run: |
         mkdir zip
         cd export
-        npm install
-        node index.js
-        node trello.js
+        pip install -r requirements.txt
+        python main.py obsidian-notes/ data.zip
         unzip data.zip -d ../zip
         mv -f ../zip/obsidian-notes/* ../zip/
         rm -rf ../zip/obsidian-notes
