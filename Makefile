@@ -14,6 +14,7 @@ import:
 	rm export/data.zip
 	rm -rf tmp/zip/obsidian-notes
 
+
 .PHONY: transform
 transform:
 	rm -rf tmp/content
