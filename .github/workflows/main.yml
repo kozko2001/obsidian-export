@@ -63,24 +63,6 @@ jobs:
         find . -name \*.md -exec python3 ../transform/blog.py -i {} -o ../blog/content/posts/obsidian/ -p ../blog/content/posts/obsidian/images \;
         mv images/* ../blog/content/posts/obsidian/images
 
-    - name: transform roam to anki cards
-      shell: bash
-      env:
-        ANKI_USERNAME: ${{ secrets.ANKI_USERNAME }}
-        ANKI_PASSWORD: ${{ secrets.ANKI_PASSWORD }}
-      run: |
-        git clone https://github.com/kozko2001/roam-to-anki.git
-        ls -la roam-to-anki/*
-        pip3 install setuptools
-        pip3 install -r roam-to-anki/importer/requirements.txt
-
-        cd roam-to-anki/transform;
-        npm install
-        node index.js -i ../../zip -o ../decks.json
-        cd ../importer
-        python3 import.py --infile ../decks.json
-
-
     - name: push to my blog
       shell: bash
       env:
