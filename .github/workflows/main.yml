@@ -39,7 +39,7 @@ jobs:
         mkdir zip
         cd export
         pip install -r requirements.txt
-        python main.py obsidian-notes/ data.zip
+        python main.py syncthing/obsidian-notes/ data.zip
         unzip data.zip -d ../zip
         mv -f ../zip/obsidian-notes/* ../zip/
         rm -rf ../zip/obsidian-notes
